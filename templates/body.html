@@ -1,0 +1,48 @@
+{% load static %}
+
+<div id="id-01">
+    <h4 id="project-name">COIN DETECT</h4>
+    <div class="row">
+        <div class="col-7" id="camera">
+            <div id="webcam">
+                <img src="http://localhost:8000/webcam" alt="can't not get camera frame" width="1080" height="720">
+            </div>
+        </div>
+        <div class="col" id="result">
+            <table class="table table-bordered table-hover table-striped caption-top border border-2 border-dark">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">硬幣種類</th>
+                        <th scope="col">硬幣個數</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">50</th>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">10</th>
+                        <td>3</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">5</th>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>7</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th scope="row">總計金額</th>
+                        <td colspan="2">99999 元</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <button type="button" class="btn btn-primary" id="btn">辨識</button>
+        </div>
+        {#        <div class="col"></div>#}
+    </div>
+</div>

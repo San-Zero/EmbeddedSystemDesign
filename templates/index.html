@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+
+    {#import css#}
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
+    <title>Coin Detect</title>
+</head>
+<body>
+    {% include 'body.html' %}
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+#id-01 {
+    background-color: #EAEAEA;
+    font-family: Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace;
+    padding: 10px;
+    margin: 0.5vw;
+    overflow: auto;
+}
+
+#result{
+    background-color: #EAEAEA;
+    padding: 0.5vw;
+    margin: 10px 10px 400px;
+    overflow: auto;
+    height: auto;
+    width: auto;
+}
+
+#result-table{
+
+}
+
+#project-name {
+    background-color: #28222a;
+    text-align: center;
+    line-height: 2vw;
+    height: 2vw;
+    font-size: 1.5vw;
+    color: #FFFFFF;
+    margin: 1vw 0;
+}
+
+#camera {
+    margin: 10px 10px;
+    width: auto;
+}
+
+#btn {
+    margin: 10px 10px 10px 480px;
+    width: auto;
+}
