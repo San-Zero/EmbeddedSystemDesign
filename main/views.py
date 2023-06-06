@@ -1,8 +1,12 @@
+import random
+
 from django.shortcuts import render
 from django.views.decorators import gzip
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, HttpResponse, JsonResponse
 import cv2
 import threading
+from .api import coinDetect
+data_list = []
 
 
 class VideoCamera(object):
@@ -17,6 +21,14 @@ class VideoCamera(object):
     def get_frame(self):
         image = self.frame
         # 在這裡做影像處理
+        global data_list
+
+        data_list = []
+        for _ in range(4):
+            random_int = random.randint(1, 10)  # 生成1到10之间的随机整数
+            data_list.append(random_int)
+
+        image = coinDetect.start(image)
 
         _, jpeg = cv2.imencode('.jpg', image)
 
@@ -46,3 +58,7 @@ def showCameraImg(request):
 
 def index(request):
     return render(request, 'index.html')
+
+
+def showResult(request):
+    return JsonResponse(data_list, safe=False)

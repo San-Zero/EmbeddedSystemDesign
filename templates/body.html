@@ -19,30 +19,41 @@
                 <tbody>
                     <tr>
                         <th scope="row">50</th>
-                        <td>2</td>
+                        <td id="coin-50">1</td>
                     </tr>
                     <tr>
                         <th scope="row">10</th>
-                        <td>3</td>
+                        <td id="coin-10">3</td>
                     </tr>
                     <tr>
                         <th scope="row">5</th>
-                        <td>1</td>
+                        <td id="coin-5">2</td>
                     </tr>
                     <tr>
                         <th scope="row">1</th>
-                        <td>7</td>
+                        <td id="coin-1">4</td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         <th scope="row">總計金額</th>
-                        <td colspan="2">99999 元</td>
+                        <td colspan="2" id="coin-total">94 元</td>
                     </tr>
                 </tfoot>
             </table>
-            <button type="button" class="btn btn-primary" id="btn">辨識</button>
         </div>
         {#        <div class="col"></div>#}
     </div>
 </div>
+<script>
+    $(document).ready(function(){
+        setInterval(function(){
+            var result = getResult("/result")
+            $("#coin-50").text(result[0]+" 個")
+            $("#coin-10").text(result[1]+" 個")
+            $("#coin-5").text(result[2]+" 個")
+            $("#coin-1").text(result[3]+" 個")
+            $("#coin-total").text(result[0]*50+result[1]*10+result[2]*5+result[3]*1+" 元")
+        }, 1000);
+    });
+</script>

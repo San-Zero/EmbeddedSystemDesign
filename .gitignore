@@ -4,3 +4,7 @@ db.sqlite3
 EmbeddedSystemDesign/__pycache__/
 
 .idea/
+
+main/__pycache__/
+
+main/api/__pycache__/
