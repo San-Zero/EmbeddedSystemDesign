@@ -9,6 +9,5 @@ function getResult(url){
             result = data;
         }
     });
-    // console.log(result);
     return result;
 }

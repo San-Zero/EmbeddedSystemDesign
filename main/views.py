@@ -6,6 +6,7 @@ from django.http import StreamingHttpResponse, HttpResponse, JsonResponse
 import cv2
 import threading
 from .api import coinDetect
+
 data_list = []
 
 
@@ -23,12 +24,10 @@ class VideoCamera(object):
         # 在這裡做影像處理
         global data_list
 
-        data_list = []
-        for _ in range(4):
-            random_int = random.randint(1, 10)  # 生成1到10之间的随机整数
-            data_list.append(random_int)
-
-        image = coinDetect.start(image)
+        try:
+            image, data_list = coinDetect.start(image)
+        except Exception as e:
+            data_list = [0, 0, 0, 0]
 
         _, jpeg = cv2.imencode('.jpg', image)
 

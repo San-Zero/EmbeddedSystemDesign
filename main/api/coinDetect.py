@@ -1,5 +1,22 @@
 import cv2
 import numpy as np
+import pickle
+
+# 模型檔路徑
+model_filename = 'main/api/svm_model.pkl'
+with open(model_filename, 'rb') as file:
+    loaded_model = pickle.load(file)
+
+
+# 預測硬幣圖像
+def predict_coin(image):
+    r_channel = list(image[:, :, 2].reshape(-1))  # 提取R通道
+    g_channel = list(image[:, :, 1].reshape(-1))  # 提取G通道
+    b_channel = list(image[:, :, 0].reshape(-1))  # 提取B通道
+    rgb = r_channel + g_channel + b_channel
+    predicted_label = loaded_model.predict([rgb])
+
+    return predicted_label
 
 
 # 邊緣檢測
@@ -13,9 +30,9 @@ def sobelEdgeDetection(f):
     return g
 
 
-def coinDetect(img):
+def coinDetect(_img):
     # ===============降噪================
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img_gray = cv2.cvtColor(_img, cv2.COLOR_BGR2GRAY)
     img_gauss = cv2.GaussianBlur(img_gray, (9, 9), 1)
     thresh, img_binary_G = cv2.threshold(img_gauss, 127, 255, cv2.THRESH_BINARY_INV)
     closing = cv2.morphologyEx(img_binary_G, cv2.MORPH_CLOSE, np.ones((3, 3), dtype=np.uint8))
@@ -54,36 +71,63 @@ def coinDetect(img):
 
     markers_temp = markers.copy()
     markers = np.uint8(markers)
-    # cv2.imshow('markers', markers*30)
+    # cv2.imshow('markers', markers * 30)
     markers = markers_temp
-    markers = cv2.watershed(img, markers)
+    markers = cv2.watershed(_img, markers)
 
-    result = np.zeros((720, 1080), np.uint8)
+    _result = np.zeros((720, 1080), np.uint8)
     for i in range(2, ret + 1):
-        result[markers == i] = 255
+        _result[markers == i] = 255
 
-    result = cv2.erode(result, np.ones((5, 5), dtype=np.uint8), iterations=1)
-    # cv2.imshow('result',result)
-    return result
+    _result = cv2.erode(_result, np.ones((5, 5), dtype=np.uint8), iterations=1)
+    # cv2.imshow('result', _result)
+    return _result
 
 
-def start(img):
-    img = cv2.resize(img, (1080, 720))
-    cv2.imshow('img', img)
-    result = coinDetect(img)
-
-    cnts, hierarchy = cv2.findContours(result, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2:]
+def start(_img):
+    _img = cv2.resize(_img, (1080, 720))
+    img_ori = _img.copy()
+    _result = coinDetect(_img)
+    cnts, hierarchy = cv2.findContours(_result, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2:]
+    _coinAmount = [0, 0, 0, 0]  # 硬幣數量(list[0]: 50元數量、list[1]: 10元數量、list[2]: 5元數量、list[3]: 1元數量
+    # total = 0
     for cnt in cnts:
+        area = cv2.contourArea(cnt)
+        if area <= 500: continue
         (x, y, w, h) = cv2.boundingRect(cnt)
-        cv2.circle(img, (int(x + w / 2), int(y + h / 2)), int((w + h) / 4), (0, 0, 255), 2)
-    return img
+        cv2.circle(_img, (int(x + w / 2), int(y + h / 2)), int((w + h) / 4), (0, 0, 255), 2)
+        img_pic = img_ori[y - 20:y + h + 20, x - 20:x + w + 20]
+        # (x, y, w, h) = str(x), str(y), str(w), str(h)
+        # cv2.imwrite('D:/school/embedded/data/' + x + y + w + h +'.png',img_pic)
+
+        img_pic = cv2.resize(img_pic, (45, 45))
+        predicted_label = predict_coin(img_pic)
+        if predicted_label == 11 or predicted_label == 12:
+            cv2.putText(_img, '1NT$', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (255, 0, 0), 3, cv2.LINE_AA)
+            _coinAmount[3] += 1
+            # total += 1
+        elif predicted_label == 51 or predicted_label == 52:
+            cv2.putText(_img, '5NT$', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (255, 0, 0), 3, cv2.LINE_AA)
+            _coinAmount[2] += 1
+            # total += 5
+        elif predicted_label == 101 or predicted_label == 102 or predicted_label == 103:
+            cv2.putText(_img, '10NT$', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (255, 0, 0), 3, cv2.LINE_AA)
+            _coinAmount[1] += 1
+            # total += 10
+        elif predicted_label == 501 or predicted_label == 502:
+            cv2.putText(_img, '50NT$', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (255, 0, 0), 3, cv2.LINE_AA)
+            _coinAmount[0] += 1
+            # total += 50
+    return _img, _coinAmount
 
 
 if __name__ == '__main__':
     filename = "coin.jpg"
     img = cv2.imread(filename)
-    img = start(img)
-    cv2.imshow('result', img)
+    cv2.imshow('img', img)
+    img, coinAmount = start(img)
 
+    print(coinAmount)
+    cv2.imshow('result', img)
     cv2.waitKey()
     cv2.destroyAllWindows()
